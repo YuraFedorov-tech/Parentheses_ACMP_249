@@ -1,0 +1,133 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class q249 {
+
+	public static void main(String[] args) {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+		String s = null;
+		while (true) {
+			
+			try {
+				s = reader.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			if(s!=null)
+				break;
+			if (s.isEmpty())
+				break;
+			
+		}
+
+
+
+		s=s.trim();
+	
+		DO(s);
+
+	}
+
+	private static void DO(String s) {
+		if (s.equals("")) {
+			System.out.println(0);
+			return;
+		}
+		ArrayList<Integer> listAfter = new ArrayList<Integer>();
+		FindS(s, listAfter);
+
+		int[] bestAns = { 300 };
+		int ans = REK(0, listAfter, 0, bestAns);
+		// System.out.println(ans);
+		System.out.println(bestAns[0]);
+	}
+
+	private static int REK(int in, ArrayList<Integer> list, int ansCur, int[] bestAns) {
+		if (in == list.size()) {
+			ansCur += in;
+			if (bestAns[0] > ansCur)
+				bestAns[0] = ansCur;
+			return ansCur;
+		}
+		if (ansCur >= bestAns[0])
+			return ansCur;
+		int q = list.get(in);
+		if (q > 2) {
+			if (in > 0)
+				if (q - 3 == list.get(in - 1)) {// если закрывающая скобка равна предидущей открывающей
+					ArrayList<Integer> listNew = new ArrayList<Integer>();
+					DONewListAfter(listNew, list);
+					listNew.remove(in - 1);
+					listNew.remove(in - 1);
+					int ans = REK(in - 1, listNew, ansCur, bestAns);
+					return ans;
+				}
+			ArrayList<Integer> listNew = new ArrayList<Integer>();
+			DONewListAfter(listNew, list);
+			listNew.remove(in);
+			int ans = REK(in, listNew, ansCur + 1, bestAns);
+			return ans;
+
+		}
+		if (q < 3) {
+			int max = 300, ans = 0;
+			for (int i = 0; i < 2; i++) {
+				ArrayList<Integer> listNew = new ArrayList<Integer>();
+				DONewListAfter(listNew, list);
+				if (i == 0) {// убираем скобку сразу
+					listNew.remove(in);
+					ans = REK(in, listNew, ansCur + 1, bestAns);
+
+				}
+				if (i == 1) {// yt убираем скобку сразу
+
+					ans = REK(in + 1, listNew, ansCur, bestAns);
+
+				}
+				if (max > ans)
+					max = ans;
+			}
+			return max;
+		}
+
+		int z = 4 / 0;
+		return ansCur;
+
+	}
+
+	public static void FindS(String s, ArrayList<Integer> list) {
+		for (int i = 0; i < s.length(); i++) {
+
+			list.add(FindChar(s.charAt(i)));
+		}
+
+	}
+
+	private static Integer FindChar(char ch) {
+		if (ch == '(')
+			return 0;
+		if (ch == '{')
+			return 1;
+		if (ch == '[')
+			return 2;
+		if (ch == ')')
+			return 3;
+		if (ch == '}')
+			return 4;
+		if (ch == ']')
+			return 5;
+		int q = 3 / 0;
+		return -100;
+	}
+
+	public static void DONewListAfter(ArrayList<Integer> listAfterNew, ArrayList<Integer> listAfter) {
+		for (int i : listAfter)
+			listAfterNew.add(i);
+
+	}
+}
